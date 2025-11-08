@@ -1,20 +1,20 @@
 import { SessionConfig } from '../types/session';
 
 /**
- * Load configuration từ environment variables
+ * Load configuration from environment variables
  */
 export function loadConfig(): SessionConfig {
   const apiKey = import.meta.env.E2B_API_KEY || '';
 
   if (!apiKey) {
     console.warn(
-      '⚠️ E2B_API_KEY không được thiết lập!\n' +
-      'Vui lòng tạo file .env và thêm E2B_API_KEY=your_api_key'
+      '⚠️ E2B_API_KEY is not set!\n' +
+      'Please create a .env file and add E2B_API_KEY=your_api_key'
     );
   }
 
-  // Kiểm tra xem có phải Pro plan không (giả định dựa trên API key format hoặc config)
-  // Trong thực tế, bạn có thể check qua API hoặc dựa vào format key
+  // Check if Pro plan (assumption based on API key format or config)
+  // In practice, you can check via API or based on key format
   const isPro = apiKey.includes('pro') || apiKey.includes('premium');
 
   const defaultDurationMinutes = parseInt(

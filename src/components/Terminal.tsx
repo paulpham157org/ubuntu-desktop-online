@@ -10,18 +10,18 @@ export function Terminal() {
 
   const handleExecute = async () => {
     if (sessionInfo.state !== SessionState.ACTIVE) {
-      setOutput('❌ Sandbox chưa sẵn sàng. Vui lòng khởi động sandbox trước.');
+      setOutput('❌ Sandbox not ready. Please start the sandbox first.');
       return;
     }
 
     setLoading(true);
-    setOutput('⏳ Đang thực thi...\n');
+    setOutput('⏳ Executing...\n');
 
     try {
       const result = await executeCode(code);
       setOutput(result);
     } catch (error) {
-      setOutput(`❌ Lỗi: ${error}`);
+      setOutput(`❌ Error: ${error}`);
     } finally {
       setLoading(false);
     }
@@ -31,7 +31,7 @@ export function Terminal() {
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
-      <h2 className="text-xl font-bold text-gray-800 mb-4">🖥️ Terminal Python</h2>
+      <h2 className="text-xl font-bold text-gray-800 mb-4">🖥️ Python Terminal</h2>
 
       <div className="space-y-4">
         <div>
@@ -43,7 +43,7 @@ export function Terminal() {
             onChange={(e) => setCode(e.target.value)}
             disabled={!isActive}
             className="w-full h-40 px-4 py-2 font-mono text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-gray-50 disabled:bg-gray-100 disabled:cursor-not-allowed"
-            placeholder="Nhập code Python..."
+            placeholder="Enter Python code..."
           />
         </div>
 
@@ -52,7 +52,7 @@ export function Terminal() {
           disabled={loading || !isActive}
           className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg transform transition hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {loading ? '⏳ Đang thực thi...' : '▶️ Chạy Code'}
+          {loading ? '⏳ Executing...' : '▶️ Run Code'}
         </button>
 
         <div>
@@ -60,7 +60,7 @@ export function Terminal() {
             Output:
           </label>
           <pre className="w-full h-48 px-4 py-2 font-mono text-sm border border-gray-300 rounded-lg bg-black text-green-400 overflow-auto">
-            {output || '💡 Output sẽ hiển thị ở đây...'}
+            {output || '💡 Output will appear here...'}
           </pre>
         </div>
       </div>

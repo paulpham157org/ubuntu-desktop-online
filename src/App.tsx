@@ -9,17 +9,17 @@ function App() {
   const { initializeManager } = useSessionStore();
 
   useEffect(() => {
-    // Khởi tạo session manager khi app load
+    // Initialize session manager on app load
     const config = loadConfig();
     initializeManager(config);
 
     console.log(`
 ╔══════════════════════════════════════════════════════════════╗
-║  🖥️  Ubuntu Desktop Online với E2B.dev                       ║
+║  🖥️  Ubuntu Desktop Online with E2B.dev                      ║
 ╟──────────────────────────────────────────────────────────────╢
-║  ⏱️  Thời gian mặc định: ${config.defaultDurationMinutes} phút                             ║
-║  ⏰  Thời gian tối đa: ${config.maxDurationMinutes} phút (${config.isPro ? 'Pro' : 'Free'} Plan)                  ║
-║  ⏸️  Cảnh báo pause: ${config.pauseWarningSeconds} giây                               ║
+║  ⏱️  Default duration: ${config.defaultDurationMinutes} minutes                              ║
+║  ⏰  Max duration: ${config.maxDurationMinutes} minutes (${config.isPro ? 'Pro' : 'Free'} Plan)                     ║
+║  ⏸️  Pause warning: ${config.pauseWarningSeconds} seconds                                 ║
 ╚══════════════════════════════════════════════════════════════╝
     `);
   }, [initializeManager]);
@@ -37,7 +37,7 @@ function App() {
             🖥️ Ubuntu Desktop Online
           </h1>
           <p className="text-gray-600">
-            Máy tính ảo trên trình duyệt với hạ tầng E2B.dev
+            Virtual Desktop on Browser with E2B.dev Infrastructure
           </p>
         </header>
 
@@ -50,34 +50,34 @@ function App() {
             {/* Info Card */}
             <div className="bg-white rounded-lg shadow-md p-6">
               <h3 className="text-lg font-bold text-gray-800 mb-3">
-                📚 Hướng dẫn sử dụng
+                📚 Quick Guide
               </h3>
               <ul className="space-y-2 text-sm text-gray-600">
                 <li className="flex items-start gap-2">
                   <span className="text-green-500 font-bold">1.</span>
-                  <span>Nhập thời gian làm việc mong muốn (mặc định 59 phút)</span>
+                  <span>Enter desired session duration (default 59 minutes)</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-blue-500 font-bold">2.</span>
-                  <span>Nhấn "Khởi động" để tạo sandbox mới</span>
+                  <span>Click "Start" to create a new sandbox</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-purple-500 font-bold">3.</span>
-                  <span>Viết và chạy code Python trong Terminal</span>
+                  <span>Write and execute Python code in the Terminal</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-orange-500 font-bold">4.</span>
-                  <span>Khi hết thời gian, sandbox sẽ tự động pause và hiển thị banner</span>
+                  <span>When time expires, sandbox will auto-pause and show banner</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-red-500 font-bold">5.</span>
-                  <span>Bạn có <strong>59 giây</strong> để nhấn "Tiếp tục" hoặc sandbox sẽ bị xóa</span>
+                  <span>You have <strong>59 seconds</strong> to click "Continue" or sandbox will be deleted</span>
                 </li>
               </ul>
 
               <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
                 <p className="text-sm text-yellow-800">
-                  💡 <strong>Lưu ý:</strong> Pro Plan cho phép mở rộng thời gian lên tới 23h59 phút
+                  💡 <strong>Note:</strong> Pro Plan allows extending session duration up to 23h59 minutes
                 </p>
               </div>
             </div>

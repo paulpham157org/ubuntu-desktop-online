@@ -36,11 +36,11 @@ export function PauseBanner() {
           </div>
 
           <h2 className="text-3xl font-bold text-white mb-4">
-            ⏰ Phiên làm việc đã hết thời gian
+            ⏰ Session Time Expired
           </h2>
 
           <p className="text-white text-lg mb-6">
-            Sandbox đã được tạm dừng. Bạn có muốn tiếp tục làm việc không?
+            Sandbox has been paused. Do you want to continue working?
           </p>
 
           <div className="bg-white bg-opacity-20 rounded-lg p-4 mb-6">
@@ -48,14 +48,14 @@ export function PauseBanner() {
               {sessionInfo.pauseCountdownSeconds}
             </div>
             <div className="text-white text-sm">
-              giây còn lại để quyết định
+              seconds remaining to decide
             </div>
           </div>
 
           <div className="text-white text-sm mb-6 bg-black bg-opacity-30 rounded-lg p-3">
-            ⚠️ Nếu bạn không nhấn nút <strong>Tiếp tục</strong> trong vòng{' '}
-            <strong>{sessionInfo.pauseCountdownSeconds} giây</strong>,
-            <br />sandbox sẽ bị xóa hoàn toàn và không thể khôi phục!
+            ⚠️ If you don't press <strong>Continue</strong> within{' '}
+            <strong>{sessionInfo.pauseCountdownSeconds} seconds</strong>,
+            <br />the sandbox will be permanently deleted and cannot be recovered!
           </div>
 
           <div className="flex gap-4 justify-center">
@@ -63,14 +63,14 @@ export function PauseBanner() {
               onClick={handleContinue}
               className="bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-8 rounded-lg shadow-lg transform transition hover:scale-105 focus:outline-none focus:ring-4 focus:ring-green-300"
             >
-              ✅ Tiếp tục làm việc
+              ✅ Continue Working
             </button>
 
             <button
               onClick={handleTerminate}
               className="bg-gray-700 hover:bg-gray-800 text-white font-bold py-4 px-8 rounded-lg shadow-lg transform transition hover:scale-105 focus:outline-none focus:ring-4 focus:ring-gray-500"
             >
-              🛑 Kết thúc
+              🛑 Terminate
             </button>
           </div>
         </div>

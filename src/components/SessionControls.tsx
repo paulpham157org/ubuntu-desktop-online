@@ -12,8 +12,8 @@ export function SessionControls() {
     try {
       await startSession(customDuration);
     } catch (error) {
-      console.error('Lỗi khi khởi động session:', error);
-      alert('Không thể khởi động session. Vui lòng kiểm tra E2B_API_KEY');
+      console.error('Error starting session:', error);
+      alert('Unable to start session. Please check your E2B_API_KEY');
     } finally {
       setLoading(false);
     }
@@ -24,7 +24,7 @@ export function SessionControls() {
     try {
       await terminateSession();
     } catch (error) {
-      console.error('Lỗi khi dừng session:', error);
+      console.error('Error stopping session:', error);
     } finally {
       setLoading(false);
     }
@@ -60,21 +60,21 @@ export function SessionControls() {
   const getStateText = (state: SessionState): string => {
     switch (state) {
       case SessionState.IDLE:
-        return 'Chờ khởi động';
+        return 'Waiting to Start';
       case SessionState.STARTING:
-        return 'Đang khởi động...';
+        return 'Starting...';
       case SessionState.ACTIVE:
-        return 'Đang hoạt động';
+        return 'Active';
       case SessionState.PAUSED:
-        return 'Tạm dừng';
+        return 'Paused';
       case SessionState.RESUMING:
-        return 'Đang tiếp tục...';
+        return 'Resuming...';
       case SessionState.TERMINATING:
-        return 'Đang đóng...';
+        return 'Terminating...';
       case SessionState.TERMINATED:
-        return 'Đã đóng';
+        return 'Terminated';
       case SessionState.ERROR:
-        return 'Lỗi';
+        return 'Error';
       default:
         return state;
     }
@@ -103,7 +103,7 @@ export function SessionControls() {
       {isActive && (
         <div className="mb-4 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg border border-blue-200">
           <div className="flex items-center justify-between">
-            <span className="text-gray-700 font-medium">⏱️ Thời gian còn lại:</span>
+            <span className="text-gray-700 font-medium">⏱️ Time Remaining:</span>
             <span className="text-2xl font-bold text-blue-600">
               {formatTime(sessionInfo.remainingSeconds)}
             </span>
@@ -124,7 +124,7 @@ export function SessionControls() {
           <div className="flex gap-3 items-end">
             <div className="flex-1">
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Thời gian làm việc (phút)
+                Session Duration (minutes)
               </label>
               <input
                 type="number"
@@ -135,7 +135,7 @@ export function SessionControls() {
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
               <p className="text-xs text-gray-500 mt-1">
-                Mặc định: 59 phút | Tối đa: 1439 phút (Pro Plan)
+                Default: 59 minutes | Max: 1439 minutes (Pro Plan)
               </p>
             </div>
             <button
@@ -143,7 +143,7 @@ export function SessionControls() {
               disabled={loading}
               className="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg transform transition hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? '⏳ Đang khởi động...' : '▶️ Khởi động'}
+              {loading ? '⏳ Starting...' : '▶️ Start'}
             </button>
           </div>
         )}
@@ -154,7 +154,7 @@ export function SessionControls() {
             disabled={loading}
             className="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg transform transition hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? '⏳ Đang dừng...' : '⏹️ Dừng Sandbox'}
+            {loading ? '⏳ Stopping...' : '⏹️ Stop Sandbox'}
           </button>
         )}
       </div>

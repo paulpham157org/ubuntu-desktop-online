@@ -19,7 +19,7 @@ export class E2BSessionManager {
   }
 
   /**
-   * Đăng ký listener để nhận thông báo thay đổi trạng thái session
+   * Subscribe listener to receive session state change notifications
    */
   public subscribe(listener: (info: SessionInfo) => void): () => void {
     this.listeners.add(listener);
@@ -27,7 +27,7 @@ export class E2BSessionManager {
   }
 
   /**
-   * Thông báo cho tất cả listeners về thay đổi trạng thái
+   * Notify all listeners about state changes
    */
   private notify(): void {
     const info = this.getSessionInfo();
@@ -35,7 +35,7 @@ export class E2BSessionManager {
   }
 
   /**
-   * Lấy thông tin session hiện tại
+   * Get current session information
    */
   public getSessionInfo(): SessionInfo {
     return {
@@ -50,22 +50,22 @@ export class E2BSessionManager {
   }
 
   /**
-   * Khởi tạo sandbox với thời gian làm việc tùy chọn
-   * @param durationMinutes - Thời gian làm việc (mặc định 59 phút, tối đa 23h59 với Pro Plan)
+   * Start sandbox with optional session duration
+   * @param durationMinutes - Session duration (default 59 minutes, max 23h59 with Pro Plan)
    */
   public async startSession(durationMinutes?: number): Promise<void> {
     try {
       this.state = SessionState.STARTING;
       this.notify();
 
-      // Xác định thời gian session
+      // Determine session duration
       let duration = durationMinutes || this.config.defaultDurationMinutes;
 
-      // Giới hạn thời gian theo plan
+      // Limit duration based on plan
       if (!this.config.isPro && duration > this.config.defaultDurationMinutes) {
         console.warn(
-          `Free plan chỉ hỗ trợ tối đa ${this.config.defaultDurationMinutes} phút. ` +
-          `Sử dụng Pro Plan để mở rộng lên ${this.config.maxDurationMinutes} phút.`
+          `Free plan only supports up to ${this.config.defaultDurationMinutes} minutes. ` +
+          `Upgrade to Pro Plan to extend up to ${this.config.maxDurationMinutes} minutes.`
         );
         duration = this.config.defaultDurationMinutes;
       } else if (duration > this.config.maxDurationMinutes) {
@@ -76,25 +76,25 @@ export class E2BSessionManager {
       this.sessionStartTime = Date.now();
       this.remainingSeconds = Math.floor(this.sessionDurationMs / 1000);
 
-      // Khởi tạo E2B sandbox
+      // Initialize E2B sandbox
       this.sandbox = await Sandbox.create({
         apiKey: this.config.apiKey,
         timeoutMs: this.sessionDurationMs
       });
 
       console.log(
-        `✅ Sandbox đã được khởi tạo: ${this.sandbox.id}\n` +
-        `⏱️  Thời gian làm việc: ${duration} phút\n` +
+        `✅ Sandbox initialized: ${this.sandbox.id}\n` +
+        `⏱️  Session duration: ${duration} minutes\n` +
         `📦 Plan: ${this.config.isPro ? 'Pro' : 'Free'}`
       );
 
       this.state = SessionState.ACTIVE;
       this.notify();
 
-      // Bắt đầu đếm ngược
+      // Start countdown
       this.startCountdown();
 
-      // Thiết lập auto-pause khi hết thời gian
+      // Setup auto-pause on timeout
       this.sessionTimeoutId = setTimeout(() => {
         this.pauseSession();
       }, this.sessionDurationMs);
@@ -102,12 +102,12 @@ export class E2BSessionManager {
     } catch (error) {
       this.state = SessionState.ERROR;
       this.notify();
-      throw new Error(`Không thể khởi tạo sandbox: ${error}`);
+      throw new Error(`Failed to initialize sandbox: ${error}`);
     }
   }
 
   /**
-   * Đếm ngược thời gian còn lại
+   * Countdown remaining time
    */
   private startCountdown(): void {
     this.countdownIntervalId = setInterval(() => {
@@ -126,7 +126,7 @@ export class E2BSessionManager {
   }
 
   /**
-   * Dừng đếm ngược
+   * Stop countdown
    */
   private clearCountdown(): void {
     if (this.countdownIntervalId) {
@@ -136,7 +136,7 @@ export class E2BSessionManager {
   }
 
   /**
-   * Pause sandbox khi hết thời gian
+   * Pause sandbox when time expires
    */
   private async pauseSession(): Promise<void> {
     if (!this.sandbox || this.state !== SessionState.ACTIVE) {
@@ -144,30 +144,30 @@ export class E2BSessionManager {
     }
 
     try {
-      console.log('⏸️  Đã hết thời gian làm việc. Đang pause sandbox...');
+      console.log('⏸️  Session time expired. Pausing sandbox...');
 
       this.state = SessionState.PAUSED;
       this.clearCountdown();
       this.notify();
 
-      // Bắt đầu đếm ngược 59 giây để người dùng quyết định
+      // Start 59-second countdown for user decision
       this.pauseCountdownSeconds = this.config.pauseWarningSeconds;
       this.startPauseCountdown();
 
-      // Tự động xóa sandbox sau 59 giây nếu không có phản hồi
+      // Auto-delete sandbox after 59 seconds if no response
       this.pauseTimeoutId = setTimeout(() => {
         this.terminateSession(true);
       }, this.config.pauseWarningSeconds * 1000);
 
     } catch (error) {
-      console.error('Lỗi khi pause sandbox:', error);
+      console.error('Error pausing sandbox:', error);
       this.state = SessionState.ERROR;
       this.notify();
     }
   }
 
   /**
-   * Đếm ngược thời gian chờ sau khi pause
+   * Countdown waiting time after pause
    */
   private startPauseCountdown(): void {
     this.countdownIntervalId = setInterval(() => {
@@ -184,7 +184,7 @@ export class E2BSessionManager {
   }
 
   /**
-   * Tiếp tục làm việc - người dùng nhấn nút Continue
+   * Continue session - user presses Continue button
    */
   public async continueSession(): Promise<void> {
     if (this.state !== SessionState.PAUSED) {
@@ -195,7 +195,7 @@ export class E2BSessionManager {
       this.state = SessionState.RESUMING;
       this.notify();
 
-      // Hủy timeout xóa sandbox
+      // Cancel sandbox deletion timeout
       if (this.pauseTimeoutId) {
         clearTimeout(this.pauseTimeoutId);
         this.pauseTimeoutId = null;
@@ -203,22 +203,22 @@ export class E2BSessionManager {
 
       this.clearCountdown();
 
-      console.log('▶️  Đang khởi động lại session...');
+      console.log('▶️  Resuming session...');
 
-      // Khởi động lại session với thời gian mặc định
+      // Restart session with default duration
       await this.terminateSession(false);
       await this.startSession(this.config.defaultDurationMinutes);
 
     } catch (error) {
-      console.error('Lỗi khi tiếp tục session:', error);
+      console.error('Error continuing session:', error);
       this.state = SessionState.ERROR;
       this.notify();
     }
   }
 
   /**
-   * Xóa hoàn toàn sandbox
-   * @param auto - True nếu tự động xóa do timeout
+   * Completely terminate sandbox
+   * @param auto - True if auto-deleted due to timeout
    */
   public async terminateSession(auto: boolean = false): Promise<void> {
     if (!this.sandbox) {
@@ -229,7 +229,7 @@ export class E2BSessionManager {
       this.state = SessionState.TERMINATING;
       this.notify();
 
-      // Clear tất cả timers
+      // Clear all timers
       if (this.sessionTimeoutId) {
         clearTimeout(this.sessionTimeoutId);
         this.sessionTimeoutId = null;
@@ -242,7 +242,7 @@ export class E2BSessionManager {
 
       const sandboxId = this.sandbox.id;
 
-      // Đóng sandbox
+      // Close sandbox
       await this.sandbox.close();
       this.sandbox = null;
       this.sessionStartTime = null;
@@ -250,33 +250,33 @@ export class E2BSessionManager {
       this.pauseCountdownSeconds = 0;
 
       if (auto) {
-        console.log(`🗑️  Sandbox ${sandboxId} đã bị xóa do không có phản hồi sau 59 giây`);
+        console.log(`🗑️  Sandbox ${sandboxId} deleted due to no response after 59 seconds`);
       } else {
-        console.log(`✅ Sandbox ${sandboxId} đã được đóng`);
+        console.log(`✅ Sandbox ${sandboxId} closed`);
       }
 
       this.state = SessionState.TERMINATED;
       this.notify();
 
-      // Reset về trạng thái IDLE sau khi terminated
+      // Reset to IDLE state after termination
       setTimeout(() => {
         this.state = SessionState.IDLE;
         this.notify();
       }, 1000);
 
     } catch (error) {
-      console.error('Lỗi khi xóa sandbox:', error);
+      console.error('Error terminating sandbox:', error);
       this.state = SessionState.ERROR;
       this.notify();
     }
   }
 
   /**
-   * Thực thi code trong sandbox
+   * Execute code in sandbox
    */
   public async executeCode(code: string): Promise<string> {
     if (!this.sandbox || this.state !== SessionState.ACTIVE) {
-      throw new Error('Sandbox chưa sẵn sàng hoặc đã bị pause');
+      throw new Error('Sandbox not ready or paused');
     }
 
     try {
@@ -293,30 +293,30 @@ export class E2BSessionManager {
         output += '\nError: ' + execution.error.value;
       }
 
-      return output || 'Không có output';
+      return output || 'No output';
     } catch (error) {
-      throw new Error(`Lỗi khi thực thi code: ${error}`);
+      throw new Error(`Error executing code: ${error}`);
     }
   }
 
   /**
-   * Lấy danh sách files trong sandbox
+   * List files in sandbox
    */
   public async listFiles(path: string = '/'): Promise<string[]> {
     if (!this.sandbox || this.state !== SessionState.ACTIVE) {
-      throw new Error('Sandbox chưa sẵn sàng');
+      throw new Error('Sandbox not ready');
     }
 
     try {
       const result = await this.sandbox.filesystem.list(path);
       return result.map(item => item.name);
     } catch (error) {
-      throw new Error(`Lỗi khi liệt kê files: ${error}`);
+      throw new Error(`Error listing files: ${error}`);
     }
   }
 
   /**
-   * Cleanup khi component unmount
+   * Cleanup on component unmount
    */
   public async cleanup(): Promise<void> {
     await this.terminateSession(false);
