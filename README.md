@@ -254,9 +254,9 @@ This project is released under the MIT License. See [LICENSE](LICENSE) file for 
 - [E2B Dashboard](https://e2b.dev/dashboard)
 - [E2B Pricing](https://e2b.dev/pricing)
 
-## 👨‍💻 Author
+## 👨‍💻 Authors
 
-Built with ❤️ by [Your Name]
+Built with ❤️ by **Paul Pham 157** and **Claude**
 
 ---
 
